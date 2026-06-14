@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E120F">
+<title>Gymr Session — Holmes Place</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0E120F;
+  --bg-card: #181D1A;
+  --bg-card-2: #1F2520;
+  --ink: #EBE4D2;
+  --ink-soft: #8A8474;
+  --ink-mid: #B5AE9C;
+  --accent: #C8DE3F;
+  --accent-glow: rgba(200, 222, 63, 0.15);
+  --line: rgba(235, 228, 210, 0.08);
+  --line-strong: rgba(235, 228, 210, 0.16);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  background: var(--bg); color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  font-size: 16px; line-height: 1.45;
+}
+body { padding: 24px 18px 60px; max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; }
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 1; mix-blend-mode: overlay;
+}
+body::after {
+  content: ''; position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse at center, var(--accent-glow), transparent 70%);
+  pointer-events: none; z-index: 0; opacity: 0.6;
+}
+.tabs { display: flex; gap: 6px; margin-bottom: 24px; position: relative; z-index: 2; }
+.tab {
+  flex: 1; padding: 10px; background: var(--bg-card); border: 1px solid var(--line);
+  border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft);
+  text-align: center; cursor: pointer; transition: all 0.2s ease;
+}
+.tab.active { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 500; }
+.view { display: none; position: relative; z-index: 2; }
+.view.active { display: block; }
+.header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.eyebrow .dot {
+  display: inline-block; width: 6px; height: 6px; background: var(--accent);
+  border-radius: 50%; margin-right: 7px; vertical-align: middle; box-shadow: 0 0 12px var(--accent);
+}
+.header h1 {
+  font-family: 'Fraunces', serif; font-weight: 900; font-size: 40px; line-height: 0.95;
+  font-variation-settings: 'opsz' 144; letter-spacing: -0.028em; margin-bottom: 14px; color: var(--ink);
+}
+.header h1 em { font-style: italic; font-weight: 400; color: var(--ink-soft); }
+.meta { display: flex; gap: 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); letter-spacing: 0.04em; flex-wrap: wrap; }
+.notice {
+  background: var(--bg-card); border: 1px solid var(--line-strong); color: var(--ink-mid);
+  padding: 16px 18px; border-radius: 3px; margin-bottom: 22px; font-size: 13px; line-height: 1.55;
+}
+.notice strong {
+  display: block; font-family: 'Fraunces', serif; font-weight: 700; font-size: 11px;
+  margin-bottom: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+  font-variation-settings: 'opsz' 9;
+}
+.notice em { color: var(--ink); font-style: normal; font-weight: 600; }
+.section-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink-soft); margin: 20px 0 10px; padding-left: 4px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.exercise {
+  background: var(--bg-card); border: 1px solid var(--line); border-radius: 3px;
+  padding: 20px 18px 18px; margin-bottom: 14px; position: relative;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.exercise.done {
+  background: var(--bg-card-2); border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px rgba(200, 222, 63, 0.2), 0 0 24px -8px var(--accent-glow);
+}
+.top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.title-block { flex: 1; padding-right: 12px; }
+.number {
+  font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px;
+  letter-spacing: 0.15em; color: var(--ink-soft); margin-bottom: 6px; display: block;
+}
+.name {
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; line-height: 1.02;
+  letter-spacing: -0.02em; font-variation-settings: 'opsz' 72; margin-bottom: 4px; color: var(--ink);
+}
+.german { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: var(--ink-soft); }
+.illustration {
+  width: 76px; height: 76px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line-strong); border-radius: 3px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2)); overflow: hidden;
+}
+.illustration svg { width: 100%; height: 100%; padding: 6px; }
+.target-row {
+  display: flex; gap: 10px; margin-bottom: 14px; padding: 10px 12px;
+  background: rgba(200, 222, 63, 0.05); border: 1px solid rgba(200, 222, 63, 0.18); border-radius: 3px;
+}
+.target-item { flex: 1; }
+.target-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 3px;
+}
+.target-value { font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; color: var(--accent); font-variation-settings: 'opsz' 48; }
+.last-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); margin-bottom: 12px; letter-spacing: 0.03em; }
+.last-time b { color: var(--ink-mid); font-weight: 500; }
+.log-row { display: flex; gap: 8px; align-items: stretch; }
+.log-input { flex: 1; display: flex; flex-direction: column; }
+.log-input label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 5px;
+}
+.log-input input {
+  background: var(--bg); border: 1px solid var(--line-strong); border-radius: 3px; color: var(--ink);
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; padding: 10px 12px;
+  width: 100%; text-align: center; -moz-appearance: textfield;
+}
+.log-input input::-webkit-outer-spin-button, .log-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.log-input input:focus { outline: none; border-color: var(--accent); }
+.log-input input::placeholder { color: var(--ink-soft); opacity: 0.4; }
+.save-btn {
+  background: var(--bg-card-2); border: 1px solid var(--line-strong); border-radius: 3px; color: var(--ink-mid);
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0 16px; cursor: pointer; transition: all 0.2s ease; align-self: flex-end; height: 44px;
+}
+.save-btn:active, .save-btn.saved { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.form-note { font-size: 12px; color: var(--ink-soft); line-height: 1.5; margin-top: 12px; }
+.form-note::before { content: '→ '; color: var(--accent); font-weight: 700; }
+.video-link {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; padding: 8px 13px;
+  background: rgba(200, 222, 63, 0.08); border: 1px solid rgba(200, 222, 63, 0.25); border-radius: 3px;
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none;
+}
+.video-link svg { width: 9px; height: 9px; fill: var(--accent); }
+.svg-stroke { stroke: var(--ink-mid); stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.svg-accent { stroke: var(--accent); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.progress-bar { position: sticky; top: 0; height: 3px; background: var(--line); margin: -24px -18px 20px; z-index: 10; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); width: 0; transition: width 0.4s cubic-bezier(0.2,0.9,0.3,1); box-shadow: 0 0 12px var(--accent); }
+.footer { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); text-align: center; }
+.footer .big {
+  font-family: 'Fraunces', serif; font-weight: 900; font-style: italic; font-size: 34px;
+  font-variation-settings: 'opsz' 144; letter-spacing: -0.025em; line-height: 1; margin-bottom: 10px; color: var(--ink);
+}
+.footer .small { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
+.finish-btn {
+  width: 100%; margin-top: 20px; padding: 16px; background: var(--accent); border: none; border-radius: 3px;
+  color: var(--bg); font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; letter-spacing: 0.02em; cursor: pointer;
+}
+.rule-block { margin-bottom: 26px; }
+.rule-block h2 {
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; margin-bottom: 12px;
+  color: var(--accent); font-variation-settings: 'opsz' 48;
+}
+.rule {
+  background: var(--bg-card); border: 1px solid var(--line); border-left: 2px solid var(--accent);
+  border-radius: 3px; padding: 14px 16px; margin-bottom: 10px; font-size: 13px; line-height: 1.55; color: var(--ink-mid);
+}
+.rule b { color: var(--ink); font-weight: 600; }
+.rule-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 0.1em; display: block; margin-bottom: 5px; }
+.history-empty { text-align: center; padding: 40px 20px; color: var(--ink-soft); font-size: 13px; line-height: 1.6; }
+.history-session { background: var(--bg-card); border: 1px solid var(--line); border-radius: 3px; padding: 16px 18px; margin-bottom: 12px; }
+.history-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 10px; }
+.history-line { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--line); color: var(--ink-mid); }
+.history-line:last-child { border-bottom: none; }
+.history-line .ex-name { color: var(--ink-soft); }
+.history-line .ex-val { font-family: 'JetBrains Mono', monospace; color: var(--ink); }
+.clear-btn {
+  width: 100%; margin-top: 16px; padding: 12px; background: transparent; border: 1px solid var(--line-strong);
+  border-radius: 3px; color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchView('session', this)">Session</div>
+  <div class="tab" onclick="switchView('rules', this)">Rules</div>
+  <div class="tab" onclick="switchView('history', this)">History</div>
+</div>
+
+<div class="view active" id="session-view">
+<header class="header">
+  <div class="eyebrow"><span><span class="dot"></span>Holmes Place</span><span>Full body</span></div>
+  <h1>Today's <em>session</em></h1>
+  <div class="meta"><span>8 movements</span><span>2 sets · 10–12</span><span>Beat the logbook</span></div>
+</header>
+<div class="notice">
+  <strong>The rule that matters</strong>
+  Start at 10 reps. Add a rep each session until you hit 12 on both sets — then <em>add 2.5kg and drop back to 10</em>. Beat something every session. Log it so next time has a target.
+</div>
+<div id="exercise-list"></div>
+<button class="finish-btn" onclick="finishSession()">Finish &amp; save session</button>
+<footer class="footer"><p class="big">Beat the logbook.</p>
+</div>
+
+<div class="view" id="rules-view">
+<header class="header">
+  <div class="eyebrow"><span><span class="dot"></span>Operating system</span><span>v1.0</span></div>
+  <h1>The <em>rules</em></h1>
+</header>
+<div class="rule-block">
+  <h2>Strength</h2>
+  <div class="rule"><span class="rule-num">RULE 01 — REP LADDER</span>Start 10 reps. +1 rep/session until 12 on both sets. Then <b>+2.5kg, back to 10</b>. Climb again. Every session has a target.</div>
+  <div class="rule"><span class="rule-num">RULE 02 — BEAT THE LOGBOOK</span>Beat last session on <b>something</b>. One rep, one machine, 2.5kg. Beat nothing = a flag, not a failure.</div>
+  <div class="rule"><span class="rule-num">RULE 03 — LAST 2 REPS HARD</span>Could do 15? Too light, move up now. Can't reach 10? Down 2.5kg. Ego costs progress both ways.</div>
+  <div class="rule"><span class="rule-num">RULE 04 — 3×/WEEK (2 FLOOR)</span>48h between sessions. Leave home by <b>19:00</b>. Every missed session was a late departure, not low motivation.</div>
+  <div class="rule"><span class="rule-num">RULE 05 — DON'T CHANGE BEFORE WK 8</span>Same template, more weight. Program-hopping keeps beginners weak. Boring is correct.</div>
+</div>
+<div class="rule-block">
+  <h2>Belly fat</h2>
+  <div class="rule"><span class="rule-num">LEVER 01 — DEFICIT</span>~300 kcal under maintenance. Not 500+. First: <b>track 14 days</b> to find your real intake — the plateau means actual ≈ maintenance.</div>
+  <div class="rule"><span class="rule-num">LEVER 02 — SLEEP</span>Fragmented sleep stores belly fat via cortisol. Fixing sleep ≈ 200 kcal/day. It's fat-loss work.</div>
+  <div class="rule"><span class="rule-num">LEVER 03 — PROTEIN 130–150g</span>Highest satiety + thermic effect, protects muscle in the deficit.</div>
+  <div class="rule"><span class="rule-num">NO SPOT REDUCTION</span>No ab exercise burns belly fat. Total body fat drops → belly follows, last. The tape moves before the scale.</div>
+  <div class="rule"><span class="rule-num">ZONE 2</span>2–3× 30–45 min sustained (cycle/walk/row). Counts only if continuous. Add on non-lifting days.</div>
+</div>
+<div class="rule-block">
+  <h2>Sleep</h2>
+  <div class="rule"><span class="rule-num">ANCHOR THE WAKE</span>Fixed alarm 11:00–11:30 daily, weekends too. <b>Kill the back-to-bed</b> — phone outside the room.</div>
+  <div class="rule"><span class="rule-num">CONSISTENCY FIRST</span>Stabilize 03:30 bed / 11:00 wake. Only after 2 stable weeks, shift earlier 15 min every 2–3 days.</div>
+  <div class="rule"><span class="rule-num">MELATONIN</span>0.3–0.5mg, 60–90 min before bed. A signal, not a sedative. More = morning grog.</div>
+  <div class="rule"><span class="rule-num">7h MINIMUM</span>11:00 wake needs 03:30 bed. 6h is a deficit night — your data proves it.</div>
+</div>
+<div class="rule-block">
+  <h2>Creatine</h2>
+  <div class="rule"><span class="rule-num">DOSE</span><b>3–5g monohydrate daily</b>, any time, forever. No loading. Creapure or any reputable brand.</div>
+  <div class="rule"><span class="rule-num">THE WATER WEIGHT</span>+1–2kg scale in weeks 1–4 = water inside muscle, NOT fat. Use the tape this window.</div>
+</div>
+<div class="rule-block">
+  <h2>Anti-stuck</h2>
+  <div class="rule"><span class="rule-num">PLATEAU = DATA</span>Stalled 2+ wks? Check in order: 1) intake crept 2) sleep slipped 3) stimulus stale 4) life load. All fixable in 1–2 wks.</div>
+  <div class="rule"><span class="rule-num">MINIMUM VIABLE WEEK</span>1 home band session + wake anchor held = a successful week in a crisis. Bar stays on the floor.</div>
+  <div class="rule"><span class="rule-num">NEVER ASSESS ON A BAD WEEK</span>Review monthly on data: logbook trend, tape trend. Not motivation, not the mirror.</div>
+</div>
+</div>
+
+<div class="view" id="history-view">
+<header class="header">
+  <div class="eyebrow"><span><span class="dot"></span>The evidence</span><span id="session-count">0 sessions</span></div>
+  <h1>Your <em>logbook</em></h1>
+  <div class="meta"><span>The counter-argument to "stuck"</span></div>
+</header>
+<div id="history-list"></div>
+</div>
+
+<script>
+const EXERCISES = [
+  { id:'row', n:'Rowing warmup', g:'Rudergerät', sec:'Warmup', start:'', unit:'min', isWarmup:true,
+    note:'Easy conversational pace, 5 min, damper 4–5. Legs, then back, then arms.', svg:'row' },
+  { id:'legpress', n:'Leg press', g:'Beinpresse', sec:'Legs', start:30, target:'50–60kg',
+    note:'Feet shoulder-width. Lower until knees ~90°. Don\'t lock at top.', vid:'https://youtu.be/p5dCqF7wWUw', svg:'legpress' },
+  { id:'legcurl', n:'Leg curl', g:'Beinbeuger', sec:'Legs', start:15, target:'25–30kg',
+    note:'Thighs under pad, ankles behind roller. Curl heels down. Slow return.', vid:'https://youtu.be/mMvQmjN-EBs', svg:'legcurl' },
+  { id:'chestpress', n:'Chest press', g:'Brustpresse', sec:'Upper body', start:15, target:'25–30kg',
+    note:'Handles at mid-chest. Push forward, don\'t lock elbows.', vid:'https://youtu.be/sqNwDkUU_Ps', svg:'chestpress' },
+  { id:'chestfly', n:'Chest fly', g:'Butterfly', sec:'Upper body', start:10, target:'15–20kg',
+    note:'Back on pad. Bring arms together in a hug. Slow return.', vid:'https://youtu.be/Z57CtFmRMxA', svg:'chestfly' },
+  { id:'seatedrow', n:'Seated row', g:'Rudermaschine', sec:'Upper body', start:20, target:'30–35kg',
+    note:'Chest on pad, pull to ribs, squeeze blades. Not the cardio rower.', vid:'https://youtu.be/TeFo51Q_Nsc', svg:'seatedrow' },
+  { id:'shoulder', n:'Shoulder press', g:'Schulterpresse', sec:'Upper body', start:10, target:'15–20kg',
+    note:'Handles at shoulder height, press up. Core tight, no back arch.', vid:'https://youtu.be/TnhIyp4kmO8', svg:'shoulder' },
+  { id:'lat', n:'Lat pulldown', g:'Latzug', sec:'Upper body', start:20, target:'30–35kg',
+    note:'Grip wide, pull to upper chest. Don\'t lean back much.', vid:'https://youtu.be/AOpi-p0cJkc', svg:'lat' },
+];
+const SVGS = {
+  row:'<svg viewBox="0 0 64 64"><line class="svg-stroke" x1="6" y1="44" x2="48" y2="44"/><circle class="svg-stroke" cx="54" cy="34" r="9"/><circle class="svg-accent" cx="54" cy="34" r="4"/><rect class="svg-stroke" x="22" y="36" width="14" height="8" rx="1"/><line class="svg-accent" x1="46" y1="33" x2="12" y2="28"/><line class="svg-stroke" x1="9" y1="24" x2="9" y2="32"/><line class="svg-stroke" x1="54" y1="24" x2="54" y2="14"/><rect class="svg-stroke" x="48" y="6" width="12" height="9" rx="1"/></svg>',
+  legpress:'<svg viewBox="0 0 64 64"><line class="svg-stroke" x1="2" y1="58" x2="62" y2="58"/><line class="svg-stroke" x1="6" y1="58" x2="6" y2="40"/><rect class="svg-stroke" x="14" y="46" width="12" height="5" rx="1"/><line class="svg-stroke" x1="6" y1="40" x2="14" y2="34"/><line class="svg-stroke" x1="14" y1="34" x2="14" y2="46"/><line class="svg-stroke" x1="22" y1="48" x2="50" y2="16"/><line class="svg-stroke" x1="28" y1="50" x2="56" y2="20"/><line class="svg-accent" x1="42" y1="8" x2="58" y2="22" stroke-width="2.4"/></svg>',
+  legcurl:'<svg viewBox="0 0 64 64"><rect class="svg-stroke" x="8" y="16" width="5" height="26" rx="1"/><rect class="svg-stroke" x="8" y="42" width="18" height="4" rx="1"/><rect class="svg-stroke" x="14" y="34" width="14" height="3" rx="0.5"/><line class="svg-stroke" x1="28" y1="37" x2="44" y2="46"/><circle class="svg-accent" cx="46" cy="46" r="3" stroke-width="2.4"/><rect class="svg-stroke" x="54" y="18" width="6" height="32" rx="1"/></svg>',
+  chestpress:'<svg viewBox="0 0 64 64"><rect class="svg-stroke" x="18" y="12" width="5" height="30" rx="1"/><rect class="svg-stroke" x="18" y="42" width="14" height="4" rx="1"/><line class="svg-stroke" x1="23" y1="22" x2="46" y2="22"/><line class="svg-stroke" x1="23" y1="30" x2="46" y2="30"/><line class="svg-accent" x1="46" y1="18" x2="46" y2="34" stroke-width="2.4"/><rect class="svg-stroke" x="52" y="18" width="6" height="30" rx="1"/></svg>',
+  chestfly:'<svg viewBox="0 0 64 64"><line class="svg-stroke" x1="22" y1="10" x2="42" y2="10"/><rect class="svg-stroke" x="28" y="14" width="8" height="28" rx="1"/><rect class="svg-stroke" x="26" y="42" width="12" height="4" rx="1"/><line class="svg-stroke" x1="30" y1="20" x2="10" y2="28"/><line class="svg-accent" x1="10" y1="22" x2="10" y2="34" stroke-width="2.4"/><line class="svg-stroke" x1="34" y1="20" x2="54" y2="28"/><line class="svg-accent" x1="54" y1="22" x2="54" y2="34" stroke-width="2.4"/></svg>',
+  seatedrow:'<svg viewBox="0 0 64 64"><rect class="svg-stroke" x="38" y="18" width="5" height="22" rx="1"/><rect class="svg-stroke" x="38" y="40" width="14" height="4" rx="1"/><line class="svg-stroke" x1="43" y1="24" x2="18" y2="24"/><line class="svg-stroke" x1="43" y1="32" x2="18" y2="32"/><line class="svg-accent" x1="18" y1="20" x2="18" y2="36" stroke-width="2.4"/><rect class="svg-stroke" x="6" y="18" width="6" height="30" rx="1"/></svg>',
+  shoulder:'<svg viewBox="0 0 64 64"><rect class="svg-stroke" x="24" y="18" width="5" height="26" rx="1"/><rect class="svg-stroke" x="24" y="44" width="14" height="4" rx="1"/><line class="svg-stroke" x1="20" y1="28" x2="20" y2="10"/><line class="svg-stroke" x1="42" y1="28" x2="42" y2="10"/><line class="svg-accent" x1="16" y1="10" x2="24" y2="10" stroke-width="2.4"/><line class="svg-accent" x1="38" y1="10" x2="46" y2="10" stroke-width="2.4"/><rect class="svg-stroke" x="52" y="18" width="6" height="30" rx="1"/></svg>',
+  lat:'<svg viewBox="0 0 64 64"><line class="svg-stroke" x1="12" y1="6" x2="52" y2="6"/><line class="svg-stroke" x1="12" y1="6" x2="12" y2="54"/><line class="svg-stroke" x1="52" y1="6" x2="52" y2="54"/><line class="svg-accent" x1="32" y1="14" x2="32" y2="22"/><line class="svg-accent" x1="18" y1="22" x2="46" y2="22" stroke-width="2.4"/><rect class="svg-stroke" x="24" y="40" width="16" height="5" rx="1"/><rect class="svg-stroke" x="54" y="20" width="6" height="28" rx="1"/></svg>',
+};
+
+let lastSession = {};
+let history = [];
+let current = {};
+
+function buildSession() {
+  let html = ''; let lastSec = '';
+  EXERCISES.forEach((ex, i) => {
+    if (ex.sec !== lastSec) { html += `<div class="section-label">${ex.sec}</div>`; lastSec = ex.sec; }
+    const prev = lastSession[ex.id];
+    const lastTimeHtml = prev
+      ? `<div class="last-time">Last time: <b>${prev.weight}${ex.unit||'kg'} × ${prev.reps}</b> — beat it</div>`
+      : (ex.isWarmup ? '' : `<div class="last-time">First time. Start at <b>${ex.start}kg</b>.</div>`);
+    const targetHtml = ex.isWarmup ? '' :
+      `<div class="target-row">
+        <div class="target-item"><div class="target-label">Start weight</div><div class="target-value">${ex.start}kg</div></div>
+        <div class="target-item"><div class="target-label">Week 8 target</div><div class="target-value">${ex.target}</div></div>
+      </div>`;
+    const logHtml = ex.isWarmup ?
+      `<div class="log-row"><div class="log-input"><label>Minutes</label><input type="number" inputmode="numeric" id="w-${ex.id}" placeholder="5"></div><button class="save-btn" onclick="saveExercise('${ex.id}', true)">Done</button></div>` :
+      `<div class="log-row"><div class="log-input"><label>Weight kg</label><input type="number" inputmode="decimal" id="w-${ex.id}" placeholder="${prev?prev.weight:ex.start}"></div><div class="log-input"><label>Reps</label><input type="number" inputmode="numeric" id="r-${ex.id}" placeholder="${prev?prev.reps:'10'}"></div><button class="save-btn" onclick="saveExercise('${ex.id}', false)">Log</button></div>`;
+    const vidHtml = ex.vid ? `<a href="${ex.vid}" class="video-link" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><path d="M4 2l10 6-10 6V2z"/></svg>Watch form</a>` : '';
+    html += `<div class="exercise" id="ex-${ex.id}"><div class="top-row"><div class="title-block"><span class="number">${String(i+1).padStart(2,'0')} / 08</span><h2 class="name">${ex.n}</h2><p class="german">${ex.g}</p></div><div class="illustration">${SVGS[ex.svg]}</div></div>${targetHtml}${lastTimeHtml}${logHtml}<p class="form-note">${ex.note}</p>${vidHtml}</div>`;
+  });
+  document.getElementById('exercise-list').innerHTML = html;
+}
+
+function saveExercise(id, isWarmup) {
+  const w = document.getElementById('w-'+id).value;
+  if (!w) return;
+  const ex = document.getElementById('ex-'+id);
+  const btn = ex.querySelector('.save-btn');
+  if (isWarmup) { current[id] = { weight: w, reps: '—' }; }
+  else { const r = document.getElementById('r-'+id).value || '—'; current[id] = { weight: w, reps: r }; }
+  ex.classList.add('done'); btn.classList.add('saved'); btn.textContent = '✓';
+  updateProgress();
+}
+
+function updateProgress() {
+  document.getElementById('progress').style.width = (Object.keys(current).length/EXERCISES.length*100) + '%';
+}
+
+function finishSession() {
+  if (Object.keys(current).length === 0) { alert('Log at least one exercise first.'); return; }
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' });
+  history.unshift({ date, entries: {...current} });
+  lastSession = {...lastSession, ...current};
+  current = {};
+  buildSession(); renderHistory(); updateProgress();
+  alert('Session saved to History. Next session shows these as targets to beat.');
+}
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  document.getElementById('session-count').textContent = history.length + (history.length===1?' session':' sessions');
+  if (history.length === 0) {
+    el.innerHTML = `<div class="history-empty">No sessions logged yet.<br><br>Each one you finish lands here — the growing proof that you progress, not stall. Come back after session 1.</div>`;
+    return;
+  }
+  let html = '';
+  history.forEach(s => {
+    let lines = '';
+    EXERCISES.forEach(ex => {
+      if (s.entries[ex.id]) {
+        const e = s.entries[ex.id];
+        const val = ex.isWarmup ? `${e.weight} min` : `${e.weight}kg × ${e.reps}`;
+        lines += `<div class="history-line"><span class="ex-name">${ex.n}</span><span class="ex-val">${val}</span></div>`;
+      }
+    });
+    html += `<div class="history-session"><div class="history-date">${s.date}</div>${lines}</div>`;
+  });
+  html += `<button class="clear-btn" onclick="if(confirm('Clear all history?')){history=[];lastSession={};buildSession();renderHistory();updateProgress();}">Clear history</button>`;
+  el.innerHTML = html;
+}
+
+function switchView(view, tab) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(view+'-view').classList.add('active');
+  tab.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+buildSession();
+renderHistory();
+</script>
+</body>
+</html>

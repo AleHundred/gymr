@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vercel
+dev-dist
+
+# Local Claude Code settings
+.claude/settings.local.json
