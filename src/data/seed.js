@@ -61,7 +61,7 @@ export function seedExercises() {
 }
 
 export const DEFAULT_SETTINGS = {
-  setsPerExercise: 2,
+  setsPerExercise: 3,
   gymName: 'Holmes Place',
   unit: 'kg'
 }
@@ -73,6 +73,6 @@ export function initialState() {
     sessions: [],
     measurements: [],
     settings: { ...DEFAULT_SETTINGS },
-    draft: { entries: {} }
+    draft: { entries: {}, skipped: {} }
   }
 }

@@ -28,7 +28,8 @@ function migrate(data) {
     data.version = STORAGE_VERSION
   }
   // Defensive defaults for fields a future import/older blob might lack.
-  if (!data.draft) data.draft = { entries: {} }
+  if (!data.draft) data.draft = { entries: {}, skipped: {} }
+  if (!data.draft.skipped) data.draft.skipped = {}
   if (!data.measurements) data.measurements = []
   return data
 }

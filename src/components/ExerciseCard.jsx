@@ -3,14 +3,14 @@ import { SVGS } from '../data/svgs.js'
 import { num } from '../lib/ids.js'
 
 // One exercise card: computed target banner, last-time line, set inputs, form note.
-export default function ExerciseCard({ exercise, number, total, setsCount, entry, target, last, beat, onLog }) {
+export default function ExerciseCard({ exercise, number, total, setsCount, entry, skipped, target, last, beat, onLog, onToggleSkip }) {
   const ex = exercise
   const filled = (entry || []).filter((s) => s.weight !== '' && s.weight != null)
-  const done = ex.isWarmup ? filled.length > 0 : filled.length === setsCount
+  const done = !skipped && (ex.isWarmup ? filled.length > 0 : filled.length === setsCount)
   const lastLine = describeLast(ex, last)
 
   return (
-    <div className={'exercise' + (done ? ' done' : '')} id={`ex-${ex.id}`}>
+    <div className={'exercise' + (done ? ' done' : '') + (skipped ? ' skipped' : '')} id={`ex-${ex.id}`}>
       <div className="top-row">
         <div className="title-block">
           <span className="number">{String(number).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
@@ -38,13 +38,22 @@ export default function ExerciseCard({ exercise, number, total, setsCount, entry
 
       <div className="last-time">{lastLine.lead}<b>{lastLine.value}</b>{lastLine.trail}</div>
 
-      <SetLogger exercise={ex} setsCount={setsCount} entry={entry} target={target} onLog={onLog} />
+      {skipped ? (
+        <div className="skip-note">Skipped this session</div>
+      ) : (
+        <SetLogger exercise={ex} setsCount={setsCount} entry={entry} target={target} onLog={onLog} />
+      )}
 
       {done && !ex.isWarmup && (
         <div className={'beat-pill' + (beat?.beat ? ' yes' : ' no')}>
           {beat?.beat ? 'I beat it' : 'Matched last time'}
         </div>
       )}
+
+      <label className="skip-toggle">
+        <input type="checkbox" checked={!!skipped} onChange={onToggleSkip} />
+        <span>{skipped ? 'Skipped' : 'Skip this exercise'}</span>
+      </label>
 
       <p className="form-note">{ex.note}</p>
 

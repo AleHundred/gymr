@@ -9,11 +9,13 @@ export default function SessionView({ app }) {
   const active = state.exercises.filter((e) => e.active).sort((a, b) => a.order - b.order)
   const setsCount = state.settings.setsPerExercise
   const draft = state.draft.entries
+  const skipped = state.draft.skipped || {}
 
-  const loggedCount = active.filter((e) =>
-    (draft[e.id] || []).some((s) => s.weight !== '' && s.weight != null)
-  ).length
-  const pct = active.length ? Math.round((loggedCount / active.length) * 100) : 0
+  const isLogged = (e) => (draft[e.id] || []).some((s) => s.weight !== '' && s.weight != null)
+  const loggedCount = active.filter(isLogged).length
+  // Progress = exercises dealt with, whether logged or deliberately skipped.
+  const handled = active.filter((e) => skipped[e.id] || isLogged(e)).length
+  const pct = active.length ? Math.round((handled / active.length) * 100) : 0
 
   function onLog(exerciseId, index, field, value) {
     const ex = active.find((e) => e.id === exerciseId)
@@ -57,10 +59,12 @@ export default function SessionView({ app }) {
         total={active.length}
         setsCount={ex.isWarmup ? 1 : setsCount}
         entry={draft[ex.id]}
+        skipped={!!skipped[ex.id]}
         target={computeTarget(ex, state.sessions)}
         last={lastEntry(ex.id, state.sessions)}
         beat={beatLogbook(ex, draft[ex.id] || [], state.sessions)}
         onLog={(index, field, value) => onLog(ex.id, index, field, value)}
+        onToggleSkip={() => dispatch({ type: 'TOGGLE_SKIP', exerciseId: ex.id })}
       />
     )
   })
