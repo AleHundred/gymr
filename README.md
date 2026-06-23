@@ -1,7 +1,7 @@
 # Gymr
 
 Personal, phone-first training tracker. Installable PWA, offline-capable, persistent. Logs gym
-sessions and computes each session's target via double progression (rep ladder). **Beat the logbook.**
+sessions and computes each session's target via double progression (rep ladder). 
 
 ## Stack
 
