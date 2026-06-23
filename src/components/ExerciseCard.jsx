@@ -3,7 +3,7 @@ import { SVGS } from '../data/svgs.js'
 import { num } from '../lib/ids.js'
 
 // One exercise card: computed target banner, last-time line, set inputs, form note.
-export default function ExerciseCard({ exercise, number, total, setsCount, entry, skipped, target, last, beat, onLog, onToggleSkip }) {
+export default function ExerciseCard({ exercise, number, total, setsCount, entry, skipped, target, stalled, last, beat, onLog, onToggleSkip }) {
   const ex = exercise
   const filled = (entry || []).filter((s) => s.weight !== '' && s.weight != null)
   const done = !skipped && (ex.isWarmup ? filled.length > 0 : filled.length === setsCount)
@@ -48,6 +48,10 @@ export default function ExerciseCard({ exercise, number, total, setsCount, entry
         <div className={'beat-pill' + (beat?.beat ? ' yes' : ' no')}>
           {beat?.beat ? 'I beat it' : 'Matched last time'}
         </div>
+      )}
+
+      {stalled && !skipped && (
+        <p className="stall-note">Flat 4 sessions, consider a 4th set</p>
       )}
 
       <label className="skip-toggle">

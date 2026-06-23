@@ -1,9 +1,13 @@
 import { STORAGE_VERSION } from '../lib/storage.js'
 
-// Progression defaults shared by every seeded exercise.
-const REP_LOW = 10
+// Progression defaults shared by every seeded exercise. Stack model: hold weight,
+// climb reps to REP_HIGH on all sets, then earn +STACK_INCREMENT and rebuild from
+// REP_RESET. REP_START is the baseline target for a brand-new exercise (no history).
+// STACK_INCREMENT is per-exercise editable for machines with non-5kg real stacks.
+const REP_START = 10
 const REP_HIGH = 12
-const INCREMENT = 2.5
+const REP_RESET = 8
+const STACK_INCREMENT = 5
 
 // The template, final per spec §3. `note` + `svg` lifted from the prototype.
 const TEMPLATE = [
@@ -52,9 +56,10 @@ const TEMPLATE = [
 export function seedExercises() {
   return TEMPLATE.map((ex, i) => ({
     ...ex,
-    repLow: REP_LOW,
+    repStart: REP_START,
     repHigh: REP_HIGH,
-    increment: INCREMENT,
+    repReset: REP_RESET,
+    stackIncrement: STACK_INCREMENT,
     active: true,
     order: i
   }))

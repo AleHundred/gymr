@@ -26,24 +26,33 @@ export function lastEntry(exerciseId, sessions) {
   return entriesForExercise(exerciseId, sessions)[0] || null
 }
 
-// Double progression (rep ladder). See spec §4.
+// Stack progression: hold weight until all sets hit the rep ceiling, then earn a
+// full-stack jump and rebuild reps from a lower number. Machine stacks have no
+// microplates, so jumps are big (default 5kg) and reps reset further (default 8).
 export function computeTarget(exercise, sessions) {
   if (exercise.isWarmup) return null
 
+  const repHigh = exercise.repHigh ?? 12
+  const repReset = exercise.repReset ?? 8
+  const repStart = exercise.repStart ?? 10
+  const inc = exercise.stackIncrement ?? 5
+
   const history = entriesForExercise(exercise.id, sessions)
   if (history.length === 0) {
-    return { weight: exercise.startWeight, reps: exercise.repLow, label: 'First session, start here' }
+    // Brand-new exercise finds its baseline; repReset is a post-jump number, not this.
+    return { weight: exercise.startWeight, reps: repStart, label: 'First session, start here' }
   }
 
   const last = history[0].sets
   const topWeight = Math.max(...last.map((s) => num(s.weight)))
-  const allHitHigh = last.every((s) => num(s.reps) >= exercise.repHigh)
+  const allHitHigh = last.every((s) => num(s.reps) >= repHigh)
 
+  // Earned the jump: every set hit the ceiling last time. Add a stack, rebuild from repReset.
   if (allHitHigh) {
     return {
-      weight: round(topWeight + exercise.increment),
-      reps: exercise.repLow,
-      label: `Add ${exercise.increment}kg, back to ${exercise.repLow} reps`
+      weight: topWeight + inc,
+      reps: repReset,
+      label: `Earned +${inc}kg, rebuild from ${repReset}`
     }
   }
 
@@ -59,8 +68,25 @@ export function computeTarget(exercise, sessions) {
 
   // Climb: same weight, add a rep to the lowest set (capped at repHigh).
   const minReps = Math.min(...last.map((s) => num(s.reps)))
-  const aim = Math.min(minReps + 1, exercise.repHigh)
+  const aim = Math.min(minReps + 1, repHigh)
   return { weight: topWeight, reps: aim, label: `Aim for ${aim} reps` }
+}
+
+// Volume-progression signal: flat for 4+ logged sessions (same top weight, no net
+// rep gain across the span = no jump earned). Surfaced as a gentle "add a 4th set" nudge.
+export function stallFlag(exercise, sessions) {
+  if (exercise.isWarmup) return false
+
+  const history = entriesForExercise(exercise.id, sessions)
+  if (history.length < 4) return false
+
+  const span = history.slice(0, 4) // newest-first
+  const topW = (e) => Math.max(...e.sets.map((s) => num(s.weight)))
+  const totalReps = (e) => e.sets.reduce((a, s) => a + num(s.reps), 0)
+
+  const flatWeight = span.every((e) => topW(e) === topW(span[0]))
+  // span[0] = newest, span[3] = oldest in the window: no net rep gain over the span.
+  return flatWeight && totalReps(span[0]) <= totalReps(span[3])
 }
 
 // Did today's sets beat the last committed session? More weight OR more reps OR more volume.
@@ -79,9 +105,4 @@ export function beatLogbook(exercise, todaySets, sessions) {
   if (todayReps > prevReps) return { beat: true, reason: 'reps' }
   if (volume(today) > volume(prev.sets)) return { beat: true, reason: 'volume' }
   return { beat: false, reason: 'matched' }
-}
-
-// Round to the nearest 0.5kg so increments stay on real plate fractions.
-function round(n) {
-  return Math.round(n * 2) / 2
 }

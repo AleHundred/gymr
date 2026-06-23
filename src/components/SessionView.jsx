@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import ExerciseCard from './ExerciseCard.jsx'
-import { computeTarget, beatLogbook, lastEntry } from '../lib/progression.js'
+import { computeTarget, beatLogbook, lastEntry, stallFlag } from '../lib/progression.js'
 
 export default function SessionView({ app }) {
   const { state, dispatch } = app
@@ -61,6 +61,7 @@ export default function SessionView({ app }) {
         entry={draft[ex.id]}
         skipped={!!skipped[ex.id]}
         target={computeTarget(ex, state.sessions)}
+        stalled={stallFlag(ex, state.sessions)}
         last={lastEntry(ex.id, state.sessions)}
         beat={beatLogbook(ex, draft[ex.id] || [], state.sessions)}
         onLog={(index, field, value) => onLog(ex.id, index, field, value)}
@@ -95,7 +96,7 @@ export default function SessionView({ app }) {
       ) : (
         <div className="notice">
           <strong>The rule that matters</strong>
-          I start at 10 reps. I add a rep each session until I hit 12 on both sets, then <em>add 2.5kg and drop back to 10</em>. I beat something every session, and I log it so next time has a target.
+          I hold the weight and climb reps to 12 on all sets. Once every set hits 12, I <em>earn +5kg and rebuild from about 8</em>. Stacks are big, so reps drop after a jump. I beat something every session, and I log it so next time has a target.
         </div>
       )}
 

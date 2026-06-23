@@ -12,9 +12,9 @@ export default function RulesView() {
 
       <div className="rule-block">
         <h2>Strength</h2>
-        <div className="rule"><span className="rule-num">RULE 01 · REP LADDER</span>Start 10 reps. +1 rep/session until 12 on both sets. Then <b>+2.5kg, back to 10</b>. Climb again. Every session has a target.</div>
-        <div className="rule"><span className="rule-num">RULE 02 · BEAT THE LOGBOOK</span>Beat last session on <b>something</b>. One rep, one machine, 2.5kg. Beat nothing = a flag, not a failure.</div>
-        <div className="rule"><span className="rule-num">RULE 03 · LAST 2 REPS HARD</span>Could do 15? Too light, move up now. Can't reach 10? Down 2.5kg. Ego costs progress both ways.</div>
+        <div className="rule"><span className="rule-num">RULE 01 · EARN THE JUMP</span>Hold the weight. +1 rep/session until 12 on all sets. Then <b>earn +5kg and rebuild from ~8</b>. Stacks have no microplates, so jumps are big. Every session has a target.</div>
+        <div className="rule"><span className="rule-num">RULE 02 · BEAT THE LOGBOOK</span>Beat last session on <b>something</b>. One rep, one set, one earned stack. Beat nothing = a flag, not a failure.</div>
+        <div className="rule"><span className="rule-num">RULE 03 · LAST 2 REPS HARD</span>Could do 15? Too light, earn the jump now. Can't reach 8? Down a stack. Ego costs progress both ways.</div>
         <div className="rule"><span className="rule-num">RULE 04 · 3×/WEEK (2 FLOOR)</span>48h between sessions. Leave home by <b>19:00</b>. Every missed session was a late departure, not low motivation.</div>
         <div className="rule"><span className="rule-num">RULE 05 · DON'T CHANGE BEFORE WK 8</span>Same template, more weight. Program-hopping keeps beginners weak. Boring is correct.</div>
       </div>
