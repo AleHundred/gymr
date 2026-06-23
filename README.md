@@ -3,10 +3,8 @@
 Personal, phone-first training tracker. Installable PWA, offline-capable, persistent. Logs gym
 sessions and computes each session's target via double progression (rep ladder). 
 
-  ___ _                        _ ___
- |   | |                      | |   |
- |   | |======================| |   |
- |___|_|                      |_|___|
+<div align="center"><img width="1206" height="2195" alt="image" src="https://github.com/user-attachments/assets/48392a21-3b03-4750-a025-1311a81ba695" /></div>
+
   
 
 ## Stack
