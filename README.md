@@ -52,14 +52,3 @@ src/
     HistoryView / ImportExport / RulesView
 ```
 
-## Deploy (Vercel)
-
-1. Push this repo to GitHub (private is fine).
-2. Import it in Vercel. It auto-detects Vite (build `vite build`, output `dist/`). No config needed.
-3. Open the `*.vercel.app` URL on the phone, Share, Add to Home Screen. Launches fullscreen, runs offline.
-
-## Roadmap
-
-- **Phase 1 (this).** Persistent tracker, progression engine, history, rules, backup, PWA. ✅
-- **Phase 2.** Progress tab: weight-over-time and body-measurement charts (Recharts), "beat N/8" streaks.
-- **Phase 3.** In-app exercise editing, multiple split templates, plateau detector.
