@@ -3,6 +3,12 @@
 Personal, phone-first training tracker. Installable PWA, offline-capable, persistent. Logs gym
 sessions and computes each session's target via double progression (rep ladder). 
 
+  ___ _                        _ ___
+ |   | |                      | |   |
+ |   | |======================| |   |
+ |___|_|                      |_|___|
+  
+
 ## Stack
 
 React 18 + Vite · localStorage persistence · `vite-plugin-pwa` (Workbox) · Recharts (Phase 2) · deploy to Vercel/Netlify.
